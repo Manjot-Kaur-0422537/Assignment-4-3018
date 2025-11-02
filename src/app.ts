@@ -1,10 +1,13 @@
 import express from "express";
-import morgan from "morgan";
+import { logger, consoleLogger } from "./api/v1/middleware/logger";
 
 const app = express();
 
 app.use(express.json());
-app.use(morgan("dev"));
+
+// Log requests to file and console
+app.use(logger);
+app.use(consoleLogger);
 
 // Base route
 app.get("/", (req, res) => {
