@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {admin} from "config/firebaseConfig";
+import {admin} from "../../../../config/firebaseConfig";
 
 // Set a custom claim (role) for a user
 export const setCustomClaim = async (req: Request, res: Response) => {

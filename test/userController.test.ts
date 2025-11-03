@@ -1,44 +1,52 @@
+import { setCustomClaim } from "../src/api/v1/controller/userController";
 import { Request, Response } from "express";
-import admin from "firebase-admin";
 
-/**
- * Set a custom claim (role) for a user.
- * Example: { role: "officer" }
- */
-export const setCustomClaim = async (req: Request, res: Response) => {
-  try {
-    const { uid, role } = req.body;
+const setCustomUserClaimsMock = jest.fn();
+const getUserMock = jest.fn();
 
-    if (!uid || !role) {
-      return res.status(400).json({ success: false, message: "UID and role are required" });
-    }
+jest.mock("../config/firebaseConfig", () => ({
+  admin: {
+    auth: jest.fn(() => ({
+      setCustomUserClaims: setCustomUserClaimsMock,
+      getUser: getUserMock,
+    })),
+  },
+}));
 
-    await admin.auth().setCustomUserClaims(uid, { role });
+describe("User Controller", () => {
+  let mockRes: Partial<Response>;
 
-    return res.status(200).json({ success: true, message: "Custom claim set successfully" });
-  } catch (error) {
-    console.error("Error setting custom claim:", (error as Error).message);
-    return res.status(500).json({ success: false, message: "Failed to set custom claim" });
-  }
-};
+  beforeEach(() => {
+    mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    jest.clearAllMocks();
+  });
 
-/**
- * Retrieve custom claims for a specific user.
- */
-export const getUserClaims = async (req: Request, res: Response) => {
-  try {
-    const { uid } = req.params;
+  it("sets custom claim successfully", async () => {
+    const mockReq = { body: { uid: "user1", role: "officer" } } as unknown as Request;
+    setCustomUserClaimsMock.mockResolvedValue(undefined);
 
-    if (!uid) {
-      return res.status(400).json({ success: false, message: "UID is required" });
-    }
+    await setCustomClaim(mockReq, mockRes as Response);
 
-    const userRecord = await admin.auth().getUser(uid);
-    const claims = userRecord.customClaims || {};
+    expect(setCustomUserClaimsMock).toHaveBeenCalledWith("user1", { role: "officer" });
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      success: true,
+      message: "Role 'officer' assigned to user user1",
+    });
+  });
 
-    return res.status(200).json({ success: true, claims });
-  } catch (error) {
-    console.error("Error retrieving custom claims:", (error as Error).message);
-    return res.status(500).json({ success: false, message: "Failed to retrieve custom claims" });
-  }
-};
+  it("returns 400 if uid or role is missing", async () => {
+    const mockReq = { body: { uid: "user1" } } as unknown as Request;
+
+    await setCustomClaim(mockReq, mockRes as Response);
+
+    expect(mockRes.status).toHaveBeenCalledWith(400);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      success: false,
+      message: "UID and role are required",
+    });
+  });
+});

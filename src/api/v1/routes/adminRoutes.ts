@@ -3,6 +3,6 @@ import { listAllUsers } from "../controller/adminController";
 
 const router = Router();
 
-router.get("/list-users", listAllUsers);
+router.get("/users", listAllUsers);
 
 export default router;
