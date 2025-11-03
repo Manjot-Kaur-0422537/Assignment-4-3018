@@ -1,19 +1,18 @@
-import { AppError } from "../../errors/Error.ts";
+import { AppError } from "../errors/AppError";
 
-export const formatError = (err: any) => {
+// Utility to format errors for response
+export const extractErrorInfo = (err: any) => {
   if (err instanceof AppError) {
     return {
-      success: false,
       message: err.message,
-      statusCode: err.statusCode,
+      status: err.statusCode,
       timestamp: err.timestamp,
     };
   }
 
   return {
-    success: false,
-    message: "Internal server error",
-    statusCode: 500,
+    message: err.message || "Internal Server Error",
+    status: 500,
     timestamp: new Date().toISOString(),
   };
 };

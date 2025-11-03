@@ -1,13 +1,12 @@
 import express from "express";
-import { logger, consoleLogger } from "./api/v1/middleware/logger";
+import { loggerMiddleware } from "./api/v1/middleware/logger";
 
 const app = express();
 
 app.use(express.json());
 
-// Log requests to file and console
-app.use(logger);
-app.use(consoleLogger);
+// Use logger middleware 
+app.use(loggerMiddleware);
 
 // Base route
 app.get("/", (req, res) => {

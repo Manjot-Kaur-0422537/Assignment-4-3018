@@ -1,22 +1,26 @@
+import morgan, { StreamOptions } from "morgan";
 import fs from "fs";
 import path from "path";
-import morgan from "morgan";
 
-// Create logs directory if it doesn’t exist
-const logDir = path.join(__dirname, "../../../../logs");
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
+// Ensure logs directory exists
+const logsDir = path.join(__dirname, "../../../logs");
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
 }
 
-// Create a write stream (in append mode)
-const accessLogStream = fs.createWriteStream(path.join(logDir, "access.log"), {
-  flags: "a",
+// File streams
+const accessLogStream = fs.createWriteStream(path.join(logsDir, "access.log"), { flags: "a" });
+const errorLogStream: StreamOptions = {
+  write: (message) => fs.appendFileSync(path.join(logsDir, "error.log"), message),
+};
+
+// Logger middlewares
+const accessLogger = morgan("combined", { stream: accessLogStream });
+const errorLogger = morgan("combined", {
+  stream: errorLogStream,
+  skip: (_, res) => res.statusCode < 400,
 });
-
-// Morgan middleware for logging requests
-const logger = morgan("combined", { stream: accessLogStream });
-
-// Also log requests to the console in development
 const consoleLogger = morgan("dev");
 
-export { logger, consoleLogger };
+// Export loggers for use in app and tests
+export { accessLogger, errorLogger, consoleLogger };
