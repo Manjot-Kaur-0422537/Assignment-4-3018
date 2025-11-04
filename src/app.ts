@@ -6,6 +6,11 @@ import { errorHandler } from "./api/v1/middleware/errorHandler";
 
 const app = express();
 
+// ✅ Use JSON and URL-encoded middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ✅ Logging middleware
 if (process.env.NODE_ENV === "production") {
   app.use(accessLogger);
   app.use(errorLogger);
@@ -13,12 +18,16 @@ if (process.env.NODE_ENV === "production") {
   app.use(consoleLogger);
 }
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ✅ Register API routes
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
-app.use("/api/users", userRoutes);
-app.use("/api/admin", adminRoutes);
+// ✅ Default route (optional)
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 
+// ✅ Global error handler (keep last)
 app.use(errorHandler);
 
 export default app;

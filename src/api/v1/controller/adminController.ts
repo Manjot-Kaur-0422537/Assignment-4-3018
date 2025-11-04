@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {admin} from "config/firebaseConfig";
+import {admin} from "../../../../config/firebaseConfig";
 
 // List all users (admin action)
 export const listAllUsers = async (req: Request, res: Response) => {

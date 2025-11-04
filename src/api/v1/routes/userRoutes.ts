@@ -1,10 +1,16 @@
-import { Router } from "express";
-import { setCustomClaim, getUserClaims } from "../controller/userController";
-import { authenticateUser } from "../middleware/authMiddleware";
+import express from "express";
 
-const router = Router();
+const router = express.Router();
 
-router.post("/set-role", authenticateUser, setCustomClaim);
-router.get("/claims/:uid", authenticateUser, getUserClaims);
+// Example route to get user by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    // You can later fetch from Firebase or DB here
+    res.json({ message: `User details for ID: ${userId}` });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;
