@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === "production") {
 // Register API routes
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/admin", adminRoutes);
-app.use("/api/v1/loans", loanRoutes);  // Loan routes
+app.use("/api/v1/loans", loanRoutes);  
 
 // Default route
 app.get("/", (req, res) => {

@@ -16,7 +16,7 @@ describe("Authorization Middleware", () => {
     const middleware = authorizeUser({ roles: ["admin", "officer"] });
     middleware(req, res, mockNext as NextFunction);
 
-    expect(mockNext).toHaveBeenCalledWith(); // success path
+    expect(mockNext).toHaveBeenCalledWith(); 
   });
 
   it("denies access with insufficient role", async () => {
@@ -42,6 +42,6 @@ describe("Authorization Middleware", () => {
     const middleware = authorizeUser({ roles: ["admin"], allowSameUser: true });
     middleware(req, res, mockNext as NextFunction);
 
-    expect(mockNext).toHaveBeenCalledWith(); // success path
+    expect(mockNext).toHaveBeenCalledWith();
   });
 });

@@ -3,7 +3,6 @@ import { admin } from "../../../../config/firebaseAdmin";
 
 const router = express.Router();
 
-// Middleware to verify token and check admin role
 const verifyAdmin = async (req: any, res: any, next: any) => {
   try {
     const authHeader = req.headers.authorization;
@@ -14,7 +13,6 @@ const verifyAdmin = async (req: any, res: any, next: any) => {
     const token = authHeader.split(" ")[1];
     const decodedToken = await admin.auth().verifyIdToken(token);
 
-    // ✅ Check if user has admin role
     if (decodedToken.role !== "admin") {
       return res.status(403).json({ error: "Access denied: insufficient role" });
     }
@@ -26,7 +24,6 @@ const verifyAdmin = async (req: any, res: any, next: any) => {
   }
 };
 
-// Admin-only route
 router.post("/set-role", verifyAdmin, async (req, res) => {
   try {
     const { uid, role } = req.body;

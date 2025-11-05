@@ -15,9 +15,7 @@ export const authorizeUser =
         return next(new AppError("User not authenticated", 401));
       }
 
-      // Role-based access
       if (options.roles && !options.roles.includes(user.role)) {
-        // Check same-user access
         if (options.allowSameUser && user.uid === req.params.id) {
           return next();
         }

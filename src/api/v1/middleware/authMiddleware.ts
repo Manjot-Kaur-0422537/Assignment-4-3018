@@ -8,7 +8,7 @@ export const authenticateUser = async (req: Request, _res: Response, next: NextF
     const token = req.body?.token;
 
     if (!token) {
-      return next(new AppError("No token provided", 401)); // Correct error code
+      return next(new AppError("No token provided", 401)); 
     }
 
     try {
